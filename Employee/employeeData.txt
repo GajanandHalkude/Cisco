@@ -1,0 +1,19 @@
+E001 m 22 JS HTML Exel 36000 
+E002 m 23 JS HTML CSS Exel 26000 
+E003 f 32 SQL Exel 30000 
+E004 m 33 SQL Python Exel 45000 
+E005 f 29 Python Exel 30000 
+E007 f 40 JS Exel 18000 
+E008 m 25 JS HTML Exel 22000 
+E009 m 27 JS React Exel 23000 
+E010 m 30 JS React Python Exel 49500 
+E011 m 33 SQL Exel 56000 
+E012 m 35 Python SQL Exel 75000 
+E013 f 28 Java SQL Exel 25000 
+E014 m 40 Rust Exel 50000 
+E015 f 34 C++ Rust Exel 55000 
+E016 m 38 Excel Power BI Exel 30000 
+E017 m 42 Python Flask Exel 27500 
+E018 m 27 SQL Exel 29000 
+E019 f 22 Python Exel 19000 
+E020 m 21 Java Exel 22000 
