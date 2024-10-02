@@ -1,0 +1,3 @@
+import creatingMyModule                 # This file also will be exucuted
+creatingMyModule.say_hi("Gajanand")
+print(creatingMyModule.__version__)
