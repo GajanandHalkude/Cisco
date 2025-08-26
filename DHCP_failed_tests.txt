@@ -1,0 +1,60 @@
+T1 : def test_clientbvi_phy_intf_v4v6(self,intf_type): 4065
+
+ class PatternNotFoundException(CafyBaseException):
+        """
+        Pattern not found in netmiko.send_command() or   							netmiko.read_until_pattern()
+        """
+        pass
+
+==> cafykit/lib/utils/cafyexception.py
+
+Expected Pattern: 'RP/0/RP0/CPU0:f3a\\-r1\\-pod8\\#'
+Prompt expected: RP/0/RP0/CPU0:f3a-r1-pod8#
+
+===> 1.
+During handling of the above exception, another exception occurred:
+../../release/25.11.55/rhel8-25.11.55/lib/python3.11/site-packages/netmiko/cisco/cisco_xr.py:255: in check_config_mode
+    output = self.read_until_pattern(pattern=pattern)
+../../release/25.11.55/rhel8-25.11.55/lib/python3.11/site-packages/netmiko/base_connection.py:696: in read_until_pattern
+    raise PatternNotFoundException(msg)
+E   netmiko.cafy_custom_exceptions.PatternNotFoundException: 
+
+===> 2. 
+During handling of the above exception, another exception occurred:
+lib/feature_lib/dhcp/dhcp_client_xr_cli.py:399: in enable_dhcp_mgmt
+
+==> 3.
+During handling of the above exception, another exception occurred:
+../../infra/cafyap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_ap.py:4098: in test_clientbvi_phy_intf_v4v6
+
+
+Approch: 
+
+72932: Prompt expected:RP/0/RP0/CPU0:f3a-r1-pod8# Cmd sent:show logging Output received:No log from execute() received
+-Debug----2025-03-24T01-32-29.115[MainThread][EventLoop]> 
+Pattern not found in output after sending cmd show logging
+ and waiting for 60 seconds. 
+Expected Pattern: 'RP/0/RP0/CPU0:f3a\\-r1\\-pod8\\#'
+
+
+72962: -Error----2025-03-24T01-33-40.653[MainThread][EventLoop]> verify_match_show_logging took longer than expected. Timeout:(231)s Elapsed(275)s 
+
+-Fail-----2025-03-24T01-33-42.941[MainThread][None]> <ExceptionInfo PatternNotFoundException(PatternNotFoundException('\nPattern not found in output after sending cmd show logging\r\n an...nterface identified from interface-ID opt"\nYou can also look at the Netmiko session_log for more information.\n    ')) tblen=38>
+
+1. Timeout: The device might be taking longer to respond than the script's timeout setting.
+2. Incorrect Pattern: The expected pattern might not match the actual prompt of the device.
+
+
+A management server is a central system used to manage, monitor, and control various network devices, applications, and services within an IT infrastructure. It typically provides functionalities such as:
+
+Note: ==>>
+Configuration Management: Ensuring devices and applications are correctly configured.
+Monitoring: Keeping track of performance, availability, and health of network components.
+Security Management: Implementing and enforcing security policies.
+Automation: Automating routine tasks to improve efficiency.
+Management servers are crucial for maintaining the stability and security of large-scale IT environments
+
+Testcase-02: 
+
+
+

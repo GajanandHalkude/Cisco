@@ -1,0 +1,59 @@
+Monday: I have raised a TZ for dhcp-snooping ts on N540-Darwin platform
+Tuesday: connected with with DE(kartik Gupta)
+Wednesday: collecting the req logs requested by DE and raised a PR with the changes/updating the input file with new platform name.
+Thursday: Testcase analysis, training
+Friday: Outing
+
+Weekly updates:
+
+Reg /ws/ghalkude-bgl/f3_asr9k_topo.json,
+connected with spirent team and resolved the issue by upgrading The test module firmware version to 5.49 of the chassis.
+
+Resolved : https://cdetsng.cisco.com/webui/#view=CSCwq55326 (pod-11 issue) and it's Techzone (https://techzone.cisco.com/t5/IOS-XR-PI-DHCP-and-DNS-Eng/quot-DHCP-ipv4-client-not-going-to-BOUND-state-quot-for-Darwin/m-p/15610787).
+
+Currently analyzing the Lacorsa SIM TB failed BVI testcases.
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+Weekly updates:
+
+Analyzed the failed testcases from the https://cafy3.cisco.com/report/2148079/2779840
+
+I have raised a TZ for the DHCP snooping test on the N540-Darwin platform: 
+https://techzone.cisco.com/t5/IOS-XR-PI-DHCP-and-DNS-Eng/quot-DHCP-ipv4-client-not-going-to-BOUND-state-quot-for-Darwin/m-p/15610787.
+I connected with DE (Kartik Gupta) and collected the requested show-tech logs. Later, I discovered that the port on the TGN connected to R1 is down.
+I have also raised a CDET for the POD issue: 
+https://cdetsng.cisco.com/webui/#view=CSCwq55326
+and created a run-list for all DHCP snooping tests after tagging all failures with CDET and analyzing them.
+
+Additionally, I have raised a PR by updating the input file to include new platforms for Lacorsa-sim and N540-Darwin: 
+https://gh-xr.scm.engit.cisco.com/xr/iosxr/pull/212259
+
+Currently, I am running all tests that use the BVI interface in the config on the Lacorsa SIM TB.
+
+11/03/25
+Monday: holiday
+Tuesday: went through the ipv6 test classes given by Lanin
+Wednesday: Analyzed test cases and training
+Thursday: continue reading Cafy, training
+Friday: holiday
+
+Analyzed https://cafy3.cisco.com/report/2103187/2724481, failed testcases, fixed the issue and raised a PR for this(merged).
+
+17032025
+Mon: I have gone through the TestStaticArp, TestAddressModification, TestIPv6NDScale, TestNDCliVerification
+Tue : 
+
+find /ws/ghalkude-bgl/iosxr/kit/lib -name "base_connection.py"
+
+I have done the analysis 
+
+
+
+CSCwn50593-            git checkout -b CSCwn50593.bootcamp.ap-training-ghalkude
+
+git push --set-upstream origin CSCwn50593.bootcamp.ap-training-ghalkude
+
+
+desc:
+test_log_directory:tests_logs/training_ap_8000_34996E7B
+ testsuite_root:/auto/firex-logs-bgl/ghalkude/FireX-ghalkude-250616-155105-4123

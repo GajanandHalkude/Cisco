@@ -1,0 +1,1 @@
+Falguni, The testcase "test_limit_lease_ckt_id" raising exception at ckt id=10, bcz unable to receive ip address from client.

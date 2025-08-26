@@ -1,0 +1,390 @@
+You want to clone a repo and you dont have much storage then clone using sparse
+command:- /auto/iosxr/bin/sparse_clone --ws_path "Your ws path"
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+r1,r2,r3
+same ip:diff port1
+
+For ssh router login:
+
+1. copy RP0 address or virtual router ip-addr
+2. login into the exec server of that testbed.
+3. ssh cafyauto@"5.2.25.10"
+4. password = cisco123
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+=> /auto/iosxr/bin/sparse_clone --ws_path /ws/ghalkude-bgl/iosxr
+
+1. Reserve a Testbed
+2. Copy the server name = ott-01-exec1
+3. login server using ssh url
+4. Set environment by running below commands
+
+Execution server for ASR9900 : ott-idt-exec2
+
+Create RunList:
+Images path: /auto/prod_weekly_archive1/bin/25.3.1.14I.DT_IMAGE/ncs5500/ncs5500-full-x-25.3.1.14I.iso
+
+csh
+source /auto/cafy/cafykit/cafy-exec/bin/activate.csh
+setenv CAFYAP_REPO /ws/ghalkude-bgl/iosxr/test/ap/
+setenv PYTHONPATH /ws/ghalkude-bgl/iosxr/test/kit/lib/
+setenv GIT_REPO /ws/ghalkude-bgl/iosxr/test/kit/
+
+
+5. Run pytest command by adding class, method, topo file path, input file.
+
+pytest ip_dhcp_infra_ap.py::TestDHCPClientOverBVI::test_clientbvi_phy_intf_v4v6  --topology-file /auto/cafy/infra/cafykit/testbed/POD/PSI/Spitfire/F3B-8000-FIX-POD25.json --test-input-file=ip_dhcp_infra_input_file.json -s
+
+pytest AP testcase -T -I
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+################  LAB vs Execution server mapping  #######################
+
+Testbed Lab =>  Execution server
+
+BGL12 Vayu  =>  xr-wrt-lnx   and   xr-wrt-lnx1
+
+BGL15 Rasa  =>  rasa-exec01-lnx  and  iceman-idt-lnx
+
+San Jose    =>  sj6-exec-01
+
+Ottawa for DNX cafy pods   =>   ott-idt-exec1
+
+Ottawa for SF cafy pods   =>    ott-01-exec1
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@RAISING-PR@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+@@@@@@@
+HOW TO RAISE A PR:
+
+# First clear the changes that made and clone the repo in main branch.
+
+git fetch origin
+git rebase origin/main
+
+# Then switch new_branch & make changes , save, commit & Push.
+
+git branch
+git checkout -b CSCwq55485.main.ip_dhcp_infra-ghalkude
+git checkout -b CSCwq55485.main.Updating_input_file-ghalkude
+git diff
+
+git add /ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_ap.py
+git add ap/ip_infra/ipv6/ipv6_base_ap.py
+git add kit/lib/feature_lib/ifmgr/ifmgr_xr_cli.py
+
+git commit -m "Fix for ANLT-Disabled on intf-CSCwq22473"
+git push origin CSCwq22473.main.ANLT_disabled-ghalkude
+
+=> add Passed log links in enclousers in the cdet
+=> same add in the PR description
+=> 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+Before running any testcase:=>
+
+1. Reserve a testbed
+2. execution server name depends on platform you are using, check it in history, in successful runs...
+3. login in to it exec-serv
+4. ping virtual ip-addr to check wether script would run or not
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@===LOGIN-TO-ROUTER===@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+For telnet: telnet "ip_addr" "port"
+
+2:{3 items
+"address_info":[1 item
+0:{
+3 items
+"address":"10.85.65.83"
+"name":"a"
+"port":2014
+}
+]
+"interface":"console"
+"name":"console"
+}
+
+For SSH: username@ip_addr
+
+"interface":"virtual"
+"name":"virtual"
+
+or 
+
+"interface":"RP0"
+"name":"RP0"
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+tasks: 
+
+Create runlist for the 4 failed ts by adding trial_run after merging PR.
+=> before running ts locally, check the image and run...
+
+1. test_clientbvi_shut_noshut
+2. test_clientbvi_shut_noshut
+3. test_clientbvi_process_restart_v6
+4. test_relay_server
+
+Note :
+While running the ts, if it is trying to connect via telnet and you already logged in R1 via telnet then the ts will fail, so logout Router after stared running ts.
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@==SIM-TESTBED==@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+To check Any slum-exec-server assigned to you? /auto/vxr/slurm_launch/slurm -m  m2 status
+1. login to your exec-sever  =  vxr-slurm-531
+2. Environment setup
+3. run pytest command with new topo-file
+
+How to bring SIM testbed :
+
+First make sure you have Passwordless SSH done,
+https://wiki.cisco.com/display/VXRSIM/Passwordless+SSH
+
+Now,
+
+Change the router image by editting this file :
+
+/ws/ghalkude-bgl/iosxr/test/kit/test/hw/bake/vxr/F3_SFSIM_bake_input.json
+
+Run Sourcing commands :
+
+csh
+source /auto/cafy/cafykit/cafy-exec/bin/activate.csh
+setenv CAFYAP_REPO /ws/ghalkude-bgl/iosxr/test/ap/
+setenv PYTHONPATH /ws/ghalkude-bgl/iosxr/test/kit/lib/
+setenv GIT_REPO /ws/ghalkude-bgl/iosxr/test/kit/
+
+run this pytest command :
+
+pytest /ws/ghalkude-bgl/iosxr/test/kit/test/hw/bake/vxr/test_vxr.py -T /ws/ghalkude-bgl/iosxr/test/kit/test/hw/bake/vxr/PSI_F3_SFSIM_Fixed_Slurm.json --script-args="/ws/ghalkude-bgl/iosxr/test/kit/test/hw/bake/vxr/F3_SFSIM_bake_input.json"
+
+For Lacorsa-Sim :
+Thursday = 31/07/2025= 11 AM
+
+pytest /ws/ghalkude-bgl/iosxr/test/kit/test/hw/bake/vxr/test_vxr.py -T /ws/ghalkude-bgl/SIM/F3_lacorsa.json --script-args="/ws/ghalkude-bgl/SIM/image_file_Lacorsa.json"
+
+Topo file = /ws/ghalkude-bgl/iosxr/test/ap/work/archive/test_vxr_20250731-103947_p3240254/lacorsa_topo.json
+
+/ws/ghalkude-bgl/iosxr/test/ap/work/archive/test_vxr_20250802-222028_p3871635/lacorsa_topo.json
+
+/ws/ghalkude-bgl/iosxr/test/ap/work/archive/test_vxr_20250808-121416_p2108803/lacorsa_topo.json
+
+/auto/prod_weekly_archive1/bin/25.4.1.11I.DT_IMAGE/8000-aarch64/8000-aarch64-25.4.1.11I.iso = /ws/ghalkude-bgl/iosxr/test/ap/work/archive/test_vxr_20250812-105103_p1467160/lacorsa_topo.json
+
+
+
+wait for some time , allure report will be generated, open logs of the report :
+https://allure.cisco.com/ws/ghalkude-bgl/iosxr/test/ap/work/archive/test_vxr_20250606-095016_p709880/all.log
+
+Scroll down to the bottom of the page, you'll find the virtual topology path, copy it.
+/ws/ghalkude-bgl/iosxr/test/ap/work/archive/test_vxr_20250606-095016_p709880/PSI_F3_SFSIM_Fixed_virtual_topo.json
+
+Now, just replace this topology path and for input file use ipv6_input_file_sim.json, in the normal pytest command ,
+
+command example :
+
+pytest /ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_ap.py::TestDhcpSnooping::test_dhcpv4_snoop_bridge_domain_bundle_subint_encap_pw --topology-file /ws/ghalkude-bgl/iosxr/test/ap/work/archive/test_vxr_20250728-115942_p1716301/lacorsa_topo.json --test-input-file=/ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_input_file.json -s
+
+(rhel8-25.4.1.15I) bgl-ads-4724:60> 
+(rhel8-25.4.1.15I) bgl-ads-4724:60> locate vxr.out
+locate: can not stat () `/var/lib/mlocate/mlocate.db': No such file or directory
+(rhel8-25.4.1.15I) bgl-ads-4724:61> pwd
+/ws/ghalkude-bgl/iosxr/test/ap/work/archive/test_vxr_20250808-121416_p2108803/reports
+(rhel8-25.4.1.15I) bgl-ads-4724:62> grep -ril "vxr.out" /ws/ghalkude-bgl/iosxr/test/ap/work/archive/test_vxr_20250808-121416_p2108803/reports
+/ws/ghalkude-bgl/iosxr/test/ap/work/archive/test_vxr_20250808-121416_p2108803/reports/data/attachments/15f3dc7f47cd0f08.txt
+/ws/ghalkude-bgl/iosxr/test/ap/work/archive/test_vxr_20250808-121416_p2108803/reports/data/attachments/8b0215f46ee4c5fa.attach
+(rhel8-25.4.1.15I) bgl-ads-4724:63> vi /ws/ghalkude-bgl/iosxr/test/ap/work/archive/test_vxr_20250808-121416_p2108803/reports/data/attachments/15f3dc7f47cd0f08.txt
+(rhel8-25.4.1.15I) bgl-ads-4724:64> 
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+Recent:=>
+#############
+SJC:
+pytest /ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_ap.py::TestDhcpProxyV6::test_dhcpv6_proxy_commit_replace --topology-file /ws/dtshilia-sjc/cafy/cafykit/testbed/POD/PSI/Spitfire/F3B-SPITFIRE-FIX-POD3.json --test-input-file=/ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_input_file.json -s --pdb
+
+OTT:
+pytest /ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_ap.py::TestRelayTgen --topology-file /auto/cafy/infra/cafykit/testbed/POD/PSI/Spitfire/F3B-8000-FIX-POD4.json --test-input-file=/ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_input_file.json -s --pdb
+
+#######
+--selective-test-file="/ws/ghalkude-bgl/dhcp_snoop.txt"
+
+pytest /ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_ap.py::TestRelayTgen::test_relay_v6_database_SRPB_bundlesub_intf --topology-file /auto/cafy/infra/cafykit/testbed/POD/PSI/Spitfire/F3B-8000-FIX-POD10.json --test-input-file=/ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_input_file.json -s --pdb
+
+pytest /ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_ap.py::TestHADhcpClientOverBVI --topology-file /auto/cafy/infra/cafykit/testbed/POD/PSI/Spitfire/F3B-8000-FIX-POD4.json --test-input-file=/ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_input_file.json -s --pdb
+
+Lacorsa-sim-BVI $$$$$$$$$$
+pytest /ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_ap.py::TestDhcpServerPlusSnoop::test_dhcp_snoop_server_process_restart --topology-file /ws/ghalkude-bgl/iosxr/test/ap/work/archive/test_vxr_20250810-154858_p2137387/lacorsa_topo.json --test-input-file=/ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_input_file.json -s
+
+pytest /ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_ap.py::TestDhcpServerPlusSnoop --topology-file /ws/ghalkude-bgl/iosxr/test/ap/work/archive/test_vxr_20250808-121416_p2108803/lacorsa_topo.json --test-input-file=/ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_input_file.json -s
+
+pytest -m test /ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_ap.py --topology-file /ws/ghalkude-bgl/iosxr/test/ap/work/archive/test_vxr_20250813-114109_p3507261/lacorsa_topo.json --test-input-file=/ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_input_file.json -s
+
+/auto/cafy/infra/cafykit/testbed/POD/PSI/ASR9K/F3A-ASR9900-MOD-POD8.json
+
+Darwin = pytest /ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_ap.py --topology-file /auto/cafy/infra/cafykit/testbed/POD/PSI/N540L/F3B-N540-POD11.json --test-input-file=/ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_input_file.json --selective-test-file="/ws/ghalkude-bgl/dhcp_snoop.txt" --debug-enable
+
+pytest /ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_ap.py::TestDhcpSnooping::test_dhcp_snooping_phy --topology-file /ws/ghalkude-bgl/iosxr/test/ap/work/archive/test_vxr_20250729-132425_p3760270/lacorsa_topo.json --test-input-file=/ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_input_file.json -s --selective-test-file="/ws/ghalkude-bgl/dhcp_snoop.txt" --debug-enable
+
+NSC5500:
+pytest /ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_ap.py::TestDhcpSnooping::test_dhcp_snooping_phy --topology-file /auto/cafy/infra/cafykit/testbed/POD/PSI/NCS5500/F3B-NCS5500-FIX-POD19.json --test-input-file=/ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_input_file.json -s
+
+ POD9- image= Workspace    : /auto/iox-lnx-026-san2/prod/25.3.1.28I.SIT_IMAGE/ncs5500/ws
+ Pod17- image=  Workspace    : /auto/iox-ucs-071-san2/prod/25.4.1.10I.DT_IMAGE/ncs5500/ws
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@==PODS==@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+ => Cafy-web pod = need to copy the topo-file from cafy-testbed website.
+ => Local Pod = topo file present in locally in your workspace(/ws/ghalkude-bgl/f3_asr9k_topo.json)
+
+Exec server= xr-wrt-lnx
+
+source commands:
+csh
+...
+
+pytest /ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_ap.py::TestRelayTgen::test_relay_positive_v6_source_interface --topology-file /ws/ghalkude-bgl/f3_asr9k_topo.json --test-input-file=/ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_input_file.json -s
+
+
+########
+
+/auto/cafy/infra/cafykit/testbed/POD/PSI/Spitfire/F3B-8000-FIX-POD30.json
+
+pytest /ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_ap.py::TestHADhcpClientOverBVI::test_clientbvi_shut_noshut --topology-file /auto/cafy/infra/cafykit/testbed/POD/PSI/Spitfire/F3B-8000-FIX-POD22.json --test-input-file=/ws/ghalkude-bgl/iosxr/test/ap/ip_infra/ip_dhcp_infra/ip_dhcp_infra_input_file.json -s
+
+*********************************
+
+18/07/25
+
+create runlist for that test_case on weekend
+
+Analyze Dhcp_snooping
+
+Try run any one test case using that topofile. and check weather passing r not? f3_asr9k_topo.json
+
+..........................
+
+15,16 = TestDhcpClient.test_dhcp_ipv4_client_details_um[gnmi-um]
+start 155176
+end 1753735 
+
+10.10.10.110 10.10.10.210
+174955
+
+25.3.1 = 18,379
+25.2.2 = 18,361
+
+with pytest.allure.step('unconfiguring the dhcp pool_2 configuration'):
+            XrSwDhcpInfraBase.unconfig_dhcp_server_2(ApData.UUT1.dhcp_server_obj,protocol='ipv4',
+                                        interface_name=ApData.r1_tgen_server_intf.name)
+            XrSwDhcpInfraBase.unconfig_dhcp_server_2(ApData.UUT1.dhcp_server_obj,protocol='ipv6',
+                                        interface_name=ApData.r1_tgen_server_intf.name)
+
+
+teardown_method = 3094
+
+273891
+3045
+
+
+
+ with ApData.topo.config(ApData.UUT1, thread=True):
+                interface = ApData.r1_r2_intf1.name
+                ApData.ifmgr_obj.delete_interface([interface])
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+#no interface HundredGigE0/0/0/30/0*
+
+try to config negotiation auto for this interface.
+
+2. Cmd sent:show interfaces brief | include ARPA    this also do it.
+
+
+
+            with pytest.allure.step("Re-Configuring interface for auto negotiation"):
+                ApData.uut2_intf_list = [ApData.r2_tgen_server_intf.name, ApData.r2_r1_intf1.name]
+                ApData.UUT2.optics_obj.create_interfaces(ApData.uut2_intf_list)
+
+
+
+            # with ApData.topo.config(ApData.UUT1, thread=True):
+            #     interface = ApData.r1_r2_intf1.name
+            #     cfg = [f"default interface {interface}"]
+            #     ApData.ifmgr_obj.device.config(cfg)
+
+/////// My-Tasksss:
+
+1. lacorsa variant sim testbed brig up => dhcp snooponf class, specifically bvi-interfaces and then run any one ts.
+	Add pytest.mark.test for all ts in dhcp snooping leaving the 5 psudo ts in the last.
+
+2. Darwin 
+first Tzone then Raise CDET with Darwin failed logs, component = DHCP.
+
+3. Find in passed logs from where stc version spirent is taking by running on diff testbed, wether from the code or some where else. try pdb mode.
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@==How to collect show-tech logs==@@@@@@@@@@@@@@@@@@@@@@@@@
+
+exec-server = ott-idt-exec3 for N540 TB's
+1. After Run completion :=>
+	router me showtech commands dalana,
+	file generate hogi,
+
+ab execution server me ye command daalna to copy in /ws/
+
+Mg ip = sh ip int br | in Mg
+
+How to collect showtech logs :
+
+scp cafyauto@5.3.18.60:/harddisk:/showtech/showtech-f3b-r3-pod17-ipv6-nd-2025-Jun-17.193215.UTC.tgz /ws/saumtiwa-bgl/showtech_logs_collected/test_nd_cache_showtech_18_jun_2025/R3_showtech
+
+sshpass -p 'cisco123' scp cafyauto@5.3.18.60:/harddisk:/showtech/showtech-f3b-r3-pod17-cef-2025-Jun-17.193519.UTC.tgz /ws/saumtiwa-bgl/showtech_logs_collected/test_nd_cache_showtech_18_jun_2025/R3_showtech
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+0: Login exec-server
+1. After running, after came in pdb, login to the router R1/R2/R3
+2. Run the given show-tech commands
+
+0/RP0/CPU0 : /harddisk:/showtech/showtech-f3a-r1-pod11-ipv4-dhcpd-snoop-2025-Jul-29.021334.UTC.tgz
+
+0/RP0/CPU0 : /harddisk:/showtech/showtech-f3a-r1-pod11-ipv4-dhcpd-relay-2025-Jul-29.021459.UTC.tgz
+
+3. show ip intf | in M = copy mgmt. server ip-addr
+
+
+4. Then in other terminal-tab login Exec server:
+
+sftp cafyauto@5.68.9.10
+
+sftp> lcd /ws/ghalkude-bgl/show_tech_dhcp
+
+sftp> get /harddisk:/showtech/showtech-f3a-r1-pod11-ipv4-dhcpd-snoop-2025-Jul-29.021334.UTC.tgz
+sftp> get /harddisk:/showtech/showtech-f3a-r1-pod11-ipv4-dhcpd-relay-2025-Jul-29.021459.UTC.tgz
+
+5. Then in cmd in  
+ls -l /ws/ghalkude-bgl/show_tech_dhcp
+
+if showing in red:::: due to not having permission so,
+chmod 777 showtech-f3a-r1-pod11-ipv4-dhcpd-relay-2025-Jul-29.021459.UTC.tgz
+chmod 777 showtech-f3a-r1-pod11-ipv4-dhcpd-snoop-2025-Jul-29.021334.UTC.tgz
+
+ ls -l => will come in blue.
+
+note: collect only 1 ts show-tech and send.
+
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+Tasks:
+1. Create Run-list for dhcp snooping ts 24 and run. so that you tag the cdet for analysis in runList.
+
+2. PR for input file change : Fixing the input file so that DHCP Snooping ts will run run without Skipping.
+changes: 
+
+            "supported_platforms" : ["NCS", "ASR","8011","8800","8212","Spitfirehw-glandon","N540","N540-Darwin","Spitfiresim-centralized","8000-K100", "8000-K100-C"],
+
+3. Raise toolbox lab case to spirent port down.

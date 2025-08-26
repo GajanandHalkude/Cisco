@@ -1,0 +1,17 @@
+DBMS:
+	1. ACID-Properties
+	2. Normalisation and its form
+
+SQl: 
+	1. Quries
+	2. Joins
+
+Codes:
+	1. Polimdrome number
+	2. Prime number
+	3. Strong Number
+	4. Leap Year
+	5. Factor of a number
+	6. factorial of a number
+	7. Fibbonacci Series
+	8. 
